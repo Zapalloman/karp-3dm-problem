@@ -1,0 +1,61 @@
+family,instance,n,m,opt,all_agree,discrepancy_reason,python_brute_k,python_smart_k,cpp_brute_k,cpp_smart_k,java_brute_k,java_smart_k
+dense,dense,4,16,4,YES,,4,4,4,4,4,4
+mini,empty,5,0,0,YES,,0,0,0,0,0,0
+mini,mini1,2,3,2,YES,,2,2,2,2,2,2
+mini,mini2,3,5,3,YES,,3,3,3,3,3,3
+mini,noperf,3,3,1,YES,,1,1,1,1,1,1
+random,random_n10_m10_s0,10,10,,YES,,7,7,7,7,7,7
+random,random_n10_m10_s1,10,10,,YES,,5,5,5,5,5,5
+random,random_n10_m10_s2,10,10,,YES,,4,4,4,4,4,4
+random,random_n10_m10_s3,10,10,,YES,,6,6,6,6,6,6
+random,random_n10_m10_s4,10,10,,YES,,5,5,5,5,5,5
+random,random_n10_m20_s0,10,20,,YES,,8,8,8,8,8,8
+random,random_n10_m20_s1,10,20,,YES,,7,7,7,7,7,7
+random,random_n10_m20_s2,10,20,,YES,,7,7,7,7,7,7
+random,random_n10_m20_s3,10,20,,YES,,8,8,8,8,8,8
+random,random_n10_m20_s4,10,20,,YES,,7,7,7,7,7,7
+random,random_n10_m40_s0,10,40,,YES,,9,9,9,9,9,9
+random,random_n10_m40_s1,10,40,,YES,,9,9,9,9,9,9
+random,random_n10_m40_s2,10,40,,YES,,9,9,9,9,9,9
+random,random_n10_m40_s3,10,40,,YES,,9,9,9,9,9,9
+random,random_n10_m40_s4,10,40,,YES,,9,9,9,9,9,9
+random,random_n10_m80_s0,10,80,,YES,,,10,10,10,10,10
+random,random_n10_m80_s1,10,80,,YES,,,10,10,10,10,10
+random,random_n10_m80_s2,10,80,,YES,,,10,10,10,10,10
+random,random_n10_m80_s3,10,80,,YES,,,10,10,10,10,10
+random,random_n10_m80_s4,10,80,,YES,,10,10,10,10,10,10
+random,random_n20_m160_s0,20,160,,YES,"timeout on: ['python_brute', 'cpp_brute', 'java_brute']",,20,,20,19,20
+random,random_n20_m160_s1,20,160,,YES,"timeout on: ['python_brute', 'cpp_brute', 'java_brute']",,20,,20,19,20
+random,random_n20_m160_s2,20,160,,YES,"timeout on: ['python_brute', 'cpp_brute', 'java_brute']",,20,,20,19,20
+random,random_n20_m160_s3,20,160,,YES,"timeout on: ['python_brute', 'cpp_brute', 'java_brute']",,20,,20,19,20
+random,random_n20_m160_s4,20,160,,YES,"timeout on: ['python_brute', 'cpp_brute', 'java_brute']",,20,,20,19,20
+random,random_n20_m20_s0,20,20,,YES,,11,11,11,11,11,11
+random,random_n20_m20_s1,20,20,,YES,,10,10,10,10,10,10
+random,random_n20_m20_s2,20,20,,YES,,10,10,10,10,10,10
+random,random_n20_m20_s3,20,20,,YES,,10,10,10,10,10,10
+random,random_n20_m20_s4,20,20,,YES,,11,11,11,11,11,11
+random,random_n20_m40_s0,20,40,,YES,,14,14,14,14,14,14
+random,random_n20_m40_s1,20,40,,YES,,15,15,15,15,15,15
+random,random_n20_m40_s2,20,40,,YES,,15,15,15,15,15,15
+random,random_n20_m40_s3,20,40,,YES,,14,14,14,14,14,14
+random,random_n20_m40_s4,20,40,,YES,,13,13,13,13,13,13
+random,random_n20_m80_s0,20,80,,YES,,,18,,18,18,18
+random,random_n20_m80_s1,20,80,,YES,"timeout on: ['python_brute', 'cpp_brute', 'java_brute']",,18,,18,17,18
+random,random_n20_m80_s2,20,80,,YES,,,18,,18,18,18
+random,random_n20_m80_s3,20,80,,YES,,,17,,17,17,17
+random,random_n20_m80_s4,20,80,,YES,,,17,,17,17,17
+structured,structured_n10_m30_s0,10,30,10,YES,,10,10,10,10,10,10
+structured,structured_n10_m30_s1,10,30,10,YES,,10,10,10,10,10,10
+structured,structured_n10_m30_s2,10,30,10,YES,,10,10,10,10,10,10
+structured,structured_n10_m30_s3,10,30,10,YES,,10,10,10,10,10,10
+structured,structured_n10_m30_s4,10,30,10,YES,,10,10,10,10,10,10
+structured,structured_n20_m60_s0,20,60,20,YES,,,20,20,20,20,20
+structured,structured_n20_m60_s1,20,60,20,YES,,,20,,20,20,20
+structured,structured_n20_m60_s2,20,60,20,YES,,,20,,20,20,20
+structured,structured_n20_m60_s3,20,60,20,YES,,,20,20,20,20,20
+structured,structured_n20_m60_s4,20,60,20,YES,,,20,,20,20,20
+structured,structured_n5_m15_s0,5,15,5,YES,,5,5,5,5,5,5
+structured,structured_n5_m15_s1,5,15,5,YES,,5,5,5,5,5,5
+structured,structured_n5_m15_s2,5,15,5,YES,,5,5,5,5,5,5
+structured,structured_n5_m15_s3,5,15,5,YES,,5,5,5,5,5,5
+structured,structured_n5_m15_s4,5,15,5,YES,,5,5,5,5,5,5

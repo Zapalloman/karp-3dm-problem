@@ -1,0 +1,151 @@
+% 02_modelo.tex — Modelo matemático (ILP)
+\section{Modelo matemático}
+\label{sec:modelo}
+
+\subsection{Conjuntos y parámetros}
+\label{sec:modelo:conjuntos}
+
+Los conjuntos $X$, $Y$, $Z$ y la colección $T$ se definen como en la
+Sección~\ref{sec:problema}.  Para cada tripleta $t\in T$ y cada elemento
+$i\in X$, $j\in Y$, $k\in Z$ definimos los \emph{indicadores de incidencia}:
+\[
+a^{X}_{t,i} = \begin{cases} 1 & \text{si } i = \pi_X(t) \\ 0 & \text{en otro caso} \end{cases},
+\qquad
+a^{Y}_{t,j} = \begin{cases} 1 & \text{si } j = \pi_Y(t) \\ 0 & \text{en otro caso} \end{cases},
+\qquad
+a^{Z}_{t,k} = \begin{cases} 1 & \text{si } k = \pi_Z(t) \\ 0 & \text{en otro caso} \end{cases}.
+\]
+Como cada tripleta tiene exactamente un elemento por dimensión,
+$\sum_{i\in X} a^{X}_{t,i}=1$ para todo $t\in T$ (análogo para $Y$, $Z$).
+
+\subsection{Variables de decisión}
+\label{sec:modelo:variables}
+
+Se define una variable binaria por tripleta:
+\[
+s_t \in \{0,1\},\quad t\in T,
+\qquad
+s_t = 1 \;\Longleftrightarrow\; t\in M.
+\]
+La notación $s_t$ (\emph{selector}) evita colisión con los elementos
+$x\in X$, que ya usan la letra~$x$.  Total: $m$ variables binarias.
+
+\subsection{Función objetivo}
+\label{sec:modelo:objetivo}
+
+Maximizar la cardinalidad del matching:
+\[
+\max \;\sum_{t\in T} s_t.
+\]
+
+\subsection{Restricciones}
+\label{sec:modelo:restricciones}
+
+Cada elemento puede ser cubierto por a lo más una tripleta.  Esto da lugar a
+tres familias de $n$ restricciones cada una:
+
+\begin{align}
+\text{(C-X)} &\quad \sum_{t\in T} a^{X}_{t,i}\,s_t \;\le\; 1, \qquad \forall\,i\in X, \label{eq:cx}\\
+\text{(C-Y)} &\quad \sum_{t\in T} a^{Y}_{t,j}\,s_t \;\le\; 1, \qquad \forall\,j\in Y, \label{eq:cy}\\
+\text{(C-Z)} &\quad \sum_{t\in T} a^{Z}_{t,k}\,s_t \;\le\; 1, \qquad \forall\,k\in Z. \label{eq:cz}
+\end{align}
+
+Total: $3n$ restricciones lineales más $m$ restricciones de integralidad.
+
+\subsection{Modelo completo}
+\label{sec:modelo:completo}
+
+\begin{equation}
+\label{eq:ilp}
+\begin{array}{rl}
+\displaystyle\max & \displaystyle\sum_{t\in T} s_t \\[1.2ex]
+\text{s.a.} & \displaystyle\sum_{t\ni i} s_t \;\le\; 1, \quad \forall\,i\in X, \\[1.0ex]
+            & \displaystyle\sum_{t\ni j} s_t \;\le\; 1, \quad \forall\,j\in Y, \\[1.0ex]
+            & \displaystyle\sum_{t\ni k} s_t \;\le\; 1, \quad \forall\,k\in Z, \\[1.0ex]
+            & s_t \in \{0,1\}, \quad \forall\,t\in T,
+\end{array}
+\tag{P$_\text{ILP}$}
+\end{equation}
+donde la notación $t\ni i$ abrevia $a^{X}_{t,i}=1$.
+
+\subsection{Equivalencia decisión \texorpdfstring{$\Leftrightarrow$}{<->} optimización}
+\label{sec:modelo:equivalencia}
+
+Sea $\mathcal{D}(I)\in\{\text{Sí},\text{No}\}$ el oráculo de decisión.
+La equivalencia es polinomial en ambos sentidos:
+\[
+\mathcal{D}(I) = \text{Sí}
+\;\Longleftrightarrow\;
+\OPT(I) = n.
+\]
+\noindent
+\textbf{Decisión $\Rightarrow$ Optimización (padding).}
+Para responder ``$\OPT(I)\ge k$?'' construimos $I_k$ aumentando $I$ con
+$n-k$ tripletas \emph{dummy} completamente disjuntas.
+Un matching perfecto en $I_k$ existe si y sólo si $\OPT(I)\ge k$.
+Con búsqueda binaria, $O(\log n)$ llamadas al oráculo de decisión determinan
+$\OPT(I)$; la construcción de cada $I_k$ es lineal.
+
+\subsection{Formulación como Exact Cover tripartito}
+\label{sec:modelo:x3c}
+
+Toda instancia $I=(X,Y,Z,T)$ de 3DM induce una instancia de
+\textit{Exact Cover by 3-Sets} (X3C)~\cite{garey1979}:
+\[
+U = X\cup Y\cup Z,\qquad |U|=3n,\qquad
+\mathcal{C} = \bigl\{\{x,y,z\} : (x,y,z)\in T\bigr\}.
+\]
+Un \emph{exact cover} $\mathcal{C}^*\subseteq\mathcal{C}$ con $|\mathcal{C}^*|=n$
+corresponde biyectivamente a un matching perfecto en $I$.
+Esta correspondencia justifica los algoritmos de
+\emph{exact cover} (tipo Dancing Links) como referencia teórica; en este
+trabajo, la lógica equivalente se implementa a mano mediante backtracking
+(véase Sección~\ref{sec:implementacion}).
+
+\subsection{Relajación LP y brecha de integralidad}
+\label{sec:modelo:lp}
+
+A diferencia del matching bipartito clásico, cuya matriz de restricciones es
+\emph{totalmente unimodular} y garantiza soluciones enteras para la relajación
+LP~\cite{garey1979}, la matriz de incidencia tripleta--elemento de 3DM
+\textbf{no} es totalmente unimodular.
+
+\begin{lemma}[Gap LP--ILP]
+\label{lem:gap}
+Existen instancias de 3DM en que la solución óptima de la relajación LP es
+estrictamente mayor que $\OPT(I)$.
+\end{lemma}
+\begin{proof}
+Sea $n=2$ y $T=\{t_1{=}(x_1,y_1,z_1),\;t_2{=}(x_1,y_2,z_2),\;t_3{=}(x_2,y_1,z_2)\}$.
+Cada par de tripletas comparte algún elemento, por lo que el óptimo entero es
+$\OPT_{\text{ILP}}=1$.
+La asignación $s_1=s_2=s_3=\tfrac{1}{2}$ es factible en la relajación LP
+(cada restricción suma a lo más 1) y da valor $\OPT_{\text{LP}}=\tfrac{3}{2}$.
+La brecha $\OPT_{\text{LP}}-\OPT_{\text{ILP}}=\tfrac{1}{2}$ descarta la
+unimodularidad total.\qed
+\end{proof}
+
+Este resultado justifica recurrir a \emph{backtracking} con poda en lugar de
+un simple redondeo de la relajación LP.
+
+\subsection{Resumen del modelo}
+\label{sec:modelo:resumen}
+
+\begin{table}[htbp]
+\centering
+\caption{Características del modelo ILP para max-3DM.}
+\label{tab:modelo_resumen}
+\begin{tabular}{ll}
+\toprule
+Característica & Valor \\
+\midrule
+Variables & $m$ binarias ($s_t\in\{0,1\}$) \\
+Restricciones lineales & $3n$ \\
+Sentido objetivo & maximización \\
+Tipo & ILP (programación entera 0--1) \\
+Relajación LP entera & no (en general) \\
+Cota dual trivial & $\OPT(I)\le n$ \\
+Tamaño peor caso & $m=O(n^3)$ \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,42 @@
+% 07_conclusiones.tex — Slide 7: Conclusiones
+\begin{frame}{Conclusiones}
+
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+
+\textbf{Lo aprendido:}
+\begin{itemize}
+  \item El modelo ILP guia directamente las podas de SMART.
+  \item MRV + forward checking reduce el arbol de busqueda de forma exponencial.
+  \item Logica identica en 3 lenguajes; solo cambia la velocidad.
+\end{itemize}
+
+\smallskip
+\textbf{Limitaciones:}
+\begin{itemize}
+  \item $n \le 50$; instancias \textit{large} ($n{=}100$) intractables.
+  \item Sin paralelismo (un solo hilo).
+\end{itemize}
+
+\end{column}
+
+\begin{column}{0.42\textwidth}
+
+\begin{block}{Trabajo futuro}
+\begin{itemize}
+  \item \textbf{Aproximaciones}: local-search de Cygan ($\approx 0.66$).
+  \item \textbf{FPT}: parametrizacion por treewidth.
+  \item \textbf{Paralelismo}: work-stealing en backtracking.
+\end{itemize}
+\end{block}
+
+\medskip
+\centering
+\large
+\textbf{3DM es NP-completo,}\\
+\textbf{pero las podas importan.}
+
+\end{column}
+\end{columns}
+
+\end{frame}

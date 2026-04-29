@@ -1,0 +1,100 @@
+% 01_problema.tex — Definición del problema 3DM
+\section{Definición del problema}
+\label{sec:problema}
+
+\subsection{Descripción informal}
+\label{sec:problema:informal}
+
+El problema \threedm{} (\textbf{3DM}) generaliza el matching bipartito clásico
+a tres dimensiones.  Dado que el matching bipartito ---que empareja pares
+$(x,y)\in X\times Y$--- se resuelve en tiempo polinomial mediante el algoritmo
+de Hopcroft--Karp~\cite{hopcroft1973}, es natural preguntarse qu\'e ocurre al
+agregar una \emph{tercera coordenada}.  La respuesta es categ\'orica: el
+problema se vuelve \textbf{NP-completo} (Karp~\cite{karp1972}, problema~\#17).
+
+\subsection{Definición formal}
+\label{sec:problema:formal}
+
+\begin{definition}[Instancia de 3DM]
+Una instancia de \threedm{} es una 4-tupla
+$I = (X,\,Y,\,Z,\,T)$
+donde $X$, $Y$, $Z$ son conjuntos finitos \emph{disjuntos} con
+$|X|=|Y|=|Z|=n$, y
+$T \subseteq X\times Y\times Z$ es el conjunto de \emph{tripletas candidatas},
+con $m = |T|$.
+\end{definition}
+
+\begin{definition}[3-matching]
+Un subconjunto $M\subseteq T$ es un \emph{3-matching} si para todo par de
+tripletas distintas $(x,y,z),(x',y',z')\in M$ se cumple
+$x\neq x'$, $y\neq y'$ y $z\neq z'$
+(cada elemento de $X\cup Y\cup Z$ aparece a lo más una vez en $M$).
+\end{definition}
+
+\paragraph{Versión de decisión (NP-completa).}
+¿Existe un 3-matching \emph{perfecto} de tamaño $n$?
+Equivalentemente: ¿existen $n$ tripletas en $T$ cuyas proyecciones sobre $X$,
+$Y$ y $Z$ cubren exactamente $X$, $Y$ y $Z$ sin repetición?
+
+\paragraph{Versión de optimización (max-3DM, NP-difícil).}
+\[
+  \OPT(I) \;=\; \max_{M\subseteq T,\;M\text{ 3-matching}} |M|.
+\]
+La versión de decisión equivale a comprobar si $\OPT(I)=n$.
+Este trabajo implementa la versión de \textbf{optimización}, ya que un solver
+de optimización resuelve gratis la decisión y produce información más rica para
+el análisis experimental.
+
+\subsection{Ejemplo ilustrativo}
+\label{sec:problema:ejemplo}
+
+Tomemos $n=3$, $X=\{x_1,x_2,x_3\}$, $Y=\{y_1,y_2,y_3\}$,
+$Z=\{z_1,z_2,z_3\}$, y el conjunto de $m=5$ tripletas:
+\[
+T = \bigl\{
+  t_1{=}(x_1,y_1,z_1),\;
+  t_2{=}(x_1,y_2,z_3),\;
+  t_3{=}(x_2,y_2,z_2),\;
+  t_4{=}(x_3,y_3,z_3),\;
+  t_5{=}(x_3,y_1,z_2)
+\bigr\}.
+\]
+El matching óptimo es
+$M^* = \{t_1, t_3, t_4\}$, con $|M^*|=3=n$ (matching perfecto).
+El candidato $M' = \{t_2, t_3, t_5\}$ tiene también tamaño~3 pero es inválido:
+$y_2$ aparece en $t_2$ y en $t_3$, y $z_2$ aparece en $t_3$ y en $t_5$.
+
+\subsection{Aplicaciones}
+\label{sec:problema:aplicaciones}
+
+\threedm{} tiene aplicaciones naturales en escenarios donde tres recursos
+distintos deben asignarse simultáneamente:
+\begin{itemize}
+  \item \textbf{Asignación tripartita académica}: emparejar estudiantes,
+        proyectos y tutores respetando compatibilidades tripartitas.
+  \item \textbf{Scheduling con tres recursos no-fungibles}: turnos de
+        quirófano (sala~+~equipo médico~+~paciente), calendarios deportivos
+        (equipo~+~cancha~+~árbitro).
+  \item \textbf{Bioinformática}: alineación tripartita de lecturas genómicas,
+        posiciones y muestras experimentales.
+  \item \textbf{Logística \textit{last-mile}}: asignación paquete--vehículo--conductor
+        con restricciones de peso, licencia y ruta.
+\end{itemize}
+
+\subsection{Versiones del problema}
+\label{sec:problema:versiones}
+
+\begin{table}[htbp]
+\centering
+\caption{Versiones de 3DM y su complejidad.}
+\label{tab:versiones}
+\begin{tabular}{lp{5.5cm}l}
+\toprule
+Versión & Pregunta & Complejidad \\
+\midrule
+Decisión (3DM) & ¿Existe $M\subseteq T$ con $|M|=n$? & NP-completo \cite{karp1972} \\
+Optimización (max-3DM) & Maximizar $|M|$ & NP-difícil; APX-difícil \cite{kann1991} \\
+Conteo (\#3DM) & ¿Cuántos matchings perfectos existen? & \#P-completo \cite{valiant1979} \\
+\bottomrule
+\end{tabular}
+\end{table}

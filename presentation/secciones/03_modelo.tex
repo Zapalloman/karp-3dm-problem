@@ -1,0 +1,41 @@
+% 03_modelo.tex — Slide 3: Modelo matematico ILP
+\begin{frame}{Modelo matemático (ILP)}
+
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+
+\textbf{Variable:} $s_t \in \{0,1\}$ para cada tripleta $t \in T$
+
+\bigskip
+\begin{block}{Formulacion ILP}
+\begin{align*}
+\max \quad & \sum_{t \in T} s_t \\[4pt]
+\text{s.a.} \quad
+  & \sum_{t \ni i} s_t \le 1 \quad \forall\, i \in X \\
+  & \sum_{t \ni j} s_t \le 1 \quad \forall\, j \in Y \\
+  & \sum_{t \ni k} s_t \le 1 \quad \forall\, k \in Z \\
+  & s_t \in \{0,1\}
+\end{align*}
+\end{block}
+
+\end{column}
+
+\begin{column}{0.42\textwidth}
+
+\textbf{Caracteristicas:}
+\begin{itemize}
+  \item $m$ variables binarias
+  \item $3n$ restricciones lineales
+  \item Relajacion LP \alert{no} integra en general
+  \item Decisión: $\mathrm{OPT}(I) = n$?
+\end{itemize}
+
+\bigskip
+\textbf{Consecuencia:}
+
+La relajacion LP admite gap $\Rightarrow$ no basta redondear; se necesita \textbf{backtracking exacto}.
+
+\end{column}
+\end{columns}
+
+\end{frame}

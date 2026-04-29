@@ -1,0 +1,158 @@
+% 03_complejidad.tex — Complejidad y NP-completitud de 3DM
+\section{Complejidad y NP-completitud}
+\label{sec:complejidad}
+
+\subsection{Pertenencia a NP}
+\label{sec:complejidad:np}
+
+\begin{theorem}[3DM $\in$ NP]
+\label{thm:np}
+El problema 3DM (versión de decisión) pertenece a la clase NP.
+\end{theorem}
+\begin{proof}
+\textbf{Certificado.} Una lista de tripletas $M=\{t_{i_1},\dots,t_{i_k}\}$
+codificada como $k$ índices en $[1,m]$.  Tamaño: $O(k\log m)$, polinomial
+en $|I|$.
+
+\textbf{Verificador.}  Dado el par $(I,M)$ con $I=(X,Y,Z,T)$:
+\begin{enumerate}
+  \item Comprobar que cada índice pertenece a $[1,m]$.
+  \item Mantener tres bitmasks $U_X$, $U_Y$, $U_Z$ inicialmente en cero.
+  \item Para cada $(x,y,z)\in M$: si el bit correspondiente está activo en
+        alguno de los tres bitmasks, rechazar; en caso contrario activarlo.
+  \item Verificar $|M|=n$.
+\end{enumerate}
+El costo es $O(n)$ con bitmasks.  Como $|I|=\Theta(m\log n)$ y el
+verificador es polinomial en $|I|$, 3DM~$\in$~NP. La versión de
+optimización es \textbf{NPO}:  para todo $k\le n$, la pregunta
+``¿existe 3-matching de tamaño $\ge k$?'' también tiene certificado
+verificable en tiempo polinomial.\qed
+\end{proof}
+
+\subsection{NP-dificultad: reducción 3-SAT \texorpdfstring{$\le_p$}{<=p} 3DM}
+\label{sec:complejidad:hard}
+
+La reducción clásica de Karp~\cite{karp1972} codifica toda fórmula 3-SAT
+$\varphi$ (con $n_v$ variables y $q$ cláusulas) como una instancia
+$\Phi(\varphi)$ de 3DM tal que:
+\[
+\varphi\text{ es satisfacible}
+\;\Longleftrightarrow\;
+\Phi(\varphi)\text{ admite matching perfecto.}
+\]
+
+\subsubsection{Gadgets de la construcción}
+\label{sec:complejidad:gadgets}
+
+Sea $k_i$ el número de ocurrencias de la variable $u_i$ en $\varphi$;
+$\sum_i k_i = 3q$.
+
+\paragraph{(G-V) Gadget de variable.}
+Por cada variable $u_i$ se crean $4k_i$ elementos:
+$\{t^i_p\}_{p=1}^{k_i}\subset X$ (lado verdadero),
+$\{f^i_p\}_{p=1}^{k_i}\subset X$ (lado falso),
+$\{a^i_p\}_{p=1}^{k_i}\subset Y$ y
+$\{b^i_p\}_{p=1}^{k_i}\subset Z$ (anclajes cíclicos),
+junto con $2k_i$ tripletas:
+\[
+T^i_p = (t^i_p,\,a^i_p,\,b^i_p),
+\qquad
+F^i_p = (f^i_p,\,a^i_{p\bmod k_i+1},\,b^i_p),
+\quad p=1,\dots,k_i.
+\]
+
+\begin{lemma}[Consistencia de variable]
+\label{lem:consistency}
+En todo matching que cubra los $2k_i$ elementos internos
+$\{a^i_p,b^i_p\}$, o bien se eligen exactamente las $k_i$
+tripletas $\{T^i_p\}$ (caso ``falso''), o bien exactamente
+las $\{F^i_p\}$ (caso ``verdadero'').  Toda mezcla es imposible.
+\end{lemma}
+\begin{proof}
+Cada $b^i_p$ aparece sólo en $T^i_p$ y $F^i_p$: se elige exactamente una.
+Cada $a^i_p$ aparece en $T^i_p$ y $F^i_{p-1}$ (índices mod $k_i$).
+Por inducción cíclica, la elección de una tripleta fuerza toda la rama.\qed
+\end{proof}
+
+\paragraph{(G-C) Gadget de cláusula.}
+Para cada cláusula $C_j = (\ell_{j,1}\vee\ell_{j,2}\vee\ell_{j,3})$ se
+crean $c_j\in Y$, $c'_j\in Z$, y tres tripletas-cláusula, una por literal:
+\[
+\bigl(\mathrm{lit}(j,\ell),\,c_j,\,c'_j\bigr),\quad \ell=1,2,3,
+\]
+donde $\mathrm{lit}(j,\ell)=t^i_p$ si el literal es $u_i$ positivo en su
+ocurrencia~$p$, y $\mathrm{lit}(j,\ell)=f^i_p$ si es $\neg u_i$.
+Exactamente una tripleta-cláusula debe entrar al matching para cubrir
+$c_j$ y $c'_j$; sólo es factible si el literal correspondiente es
+verdadero bajo la asignación inducida por (G-V).
+
+\paragraph{(G-G) Gadget de \textit{garbage collection}.}
+Los $2q$ elementos $X$-libres sobrantes tras (G-V) y (G-C) se absorben
+con $2q$ nuevos elementos en $Y$ y $2q$ en $Z$, más todas las tripletas
+del producto cartesiano (total $O(q^3)$).
+
+\paragraph{Tamaño de la instancia construida.}
+La instancia $\Phi(\varphi)$ tiene $n=6q$ elementos por dimensión y
+$m=O(q^3)$ tripletas.  La construcción es \emph{polinomial} en $|\varphi|$.
+
+\subsubsection{Correctitud de la reducción (sketch)}
+\label{sec:complejidad:correctitud}
+
+\textbf{(Sat $\Rightarrow$ matching perfecto.)}
+Dada una asignación satisfactoria $\sigma$:
+(i) elegir la rama $F^i_*$ si $\sigma(u_i)=\text{verdadero}$ o la rama
+$T^i_*$ si falso (por el Lema~\ref{lem:consistency});
+(ii) para cada cláusula $C_j$, algún literal $\ell^*$ es verdadero, luego
+su elemento $\mathrm{lit}(j,\ell^*)$ está libre y cubre $c_j$, $c'_j$;
+(iii) los $2q$ $X$-libres restantes se emparejan con los garbages.
+El matching resultante tiene cardinalidad $|M|=6q=n$.~\checkmark
+
+\textbf{(Matching perfecto $\Rightarrow$ Sat.)}
+Por el Lema~\ref{lem:consistency}, el matching induce una asignación
+bien definida $\sigma$.  Para cada cláusula $C_j$, el hecho de que $c_j$ y
+$c'_j$ estén cubiertos implica que algún literal de $C_j$ es verdadero bajo
+$\sigma$.~\checkmark
+
+\begin{theorem}[3DM es NP-completo]
+\label{thm:npc}
+3DM es NP-completo.
+\end{theorem}
+\begin{proof}
+NP-membresía: Teorema~\ref{thm:np}.
+NP-dificultad: la reducción polinomial $\text{3-SAT}\le_p\text{3DM}$ descrita
+arriba, combinada con la NP-completitud de 3-SAT (Cook--Levin~\cite{cook1971}).
+\qed
+\end{proof}
+
+\subsection{APX-dificultad de max-3DM}
+\label{sec:complejidad:apx}
+
+La versión de optimización (max-3DM) es \textbf{APX-difícil}~\cite{kann1991}:
+no admite esquema de aproximación polynomial (PTAS) a menos que P=NP.
+El mejor algoritmo de aproximación polinomial conocido logra una razón
+$\approx 0.66$ (vía \emph{local search} iterado; Cygan et al.~\cite{cygan2015}).
+La cota trivial de $\tfrac{1}{3}$ la da el algoritmo greedy (tomar tripletas
+iterativamente descartando colisiones).
+
+\subsection{Relaciones con otros problemas de Karp}
+\label{sec:complejidad:relaciones}
+
+\begin{table}[htbp]
+\centering
+\caption{Relaciones de 3DM con otros problemas NP-completos.}
+\label{tab:karp_rel}
+\begin{tabular}{llll}
+\toprule
+Problema (Karp~\#) & Relación con 3DM & Dirección \\
+\midrule
+3-SAT (\#11) & Reducción base & $\text{3-SAT}\le_p\text{3DM}$ \\
+Exact Cover by 3-Sets (\#14) & 3DM = versión tripartita & mutua \\
+Set Packing (\#4) & 3DM es caso especial & $\text{3DM}\le_p\text{Set Packing}$ \\
+Bipartite Matching (no Karp) & Caso 2D en P & $\text{2DM}\in\text{P}$, frontera \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La fila ``Bipartite Matching'' es el punto de partida conceptual: la
+\emph{tercera dimensión} rompe la unimodularidad total del polítopo
+(Lema~\ref{lem:gap}) y lleva el problema de P a NP-completo.

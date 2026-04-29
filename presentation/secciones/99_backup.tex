@@ -1,0 +1,100 @@
+% 99_backup.tex — Slides de backup para preguntas
+\appendix
+
+\begin{frame}{Backup: Tabla de tiempos completa (small suite)}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{llrrl}
+\toprule
+Lenguaje & Algoritmo & $n$ & Mediana (ms) & Instancias \\
+\midrule
+C++     & brute & 5  & 0.006   & 6 \\
+C++     & brute & 10 & 0.467   & 25 \\
+C++     & brute & 20 & timeout & 25 \\
+C++     & smart & 5  & 0.005   & 6 \\
+C++     & smart & 10 & 0.011   & 25 \\
+C++     & smart & 20 & 0.060   & 25 \\
+\midrule
+Java    & brute & 10 & 5.932   & 25 \\
+Java    & brute & 20 & timeout & 25 \\
+Java    & smart & 10 & 3.361   & 25 \\
+Java    & smart & 20 & 4.454   & 25 \\
+\midrule
+Python  & brute & 10 & 24.544  & 25 \\
+Python  & brute & 20 & timeout & 25 \\
+Python  & smart & 10 & 0.269   & 25 \\
+Python  & smart & 20 & 2.725   & 25 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+{\small Timeout = 30 s (small suite). Valores 5000 ms en CSV corresponden al timeout del script.}
+
+\end{frame}
+
+\begin{frame}{Backup: Correctitud de las 6 implementaciones}
+
+\begin{center}
+\begin{tabular}{llrrll}
+\toprule
+Instancia & $n$ & $m$ & OPT & Acuerdo & Todos \\
+\midrule
+mini1   & 2 & 3  & 2 & SI & 2 \\
+mini2   & 3 & 5  & 3 & SI & 3 \\
+noperf  & 3 & 3  & 1 & SI & 1 \\
+dense   & 4 & 16 & 4 & SI & 4 \\
+empty   & 5 & 0  & 0 & SI & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\textbf{0 discrepancias de bug} en todas las instancias completadas.\\
+Los 6 solvers producen identico $\mathrm{OPT}(I)$ y mismos nodos explorados.
+
+\end{frame}
+
+\begin{frame}{Backup: Gadgets de la reduccion 3-SAT $\le_p$ 3DM}
+
+\textbf{Gadget de variable} $u_i$ con $k_i$ ocurrencias:
+\begin{itemize}
+  \item Elementos: $\{t^i_p\}_{p=1}^{k_i} \subset X$ (verdadero), $\{f^i_p\} \subset X$ (falso), $\{a^i_p\}\subset Y$, $\{b^i_p\}\subset Z$
+  \item Tripletas: $T^i_p = (t^i_p, a^i_p, b^i_p)$ y $F^i_p = (f^i_p, a^i_{p \bmod k_i+1}, b^i_p)$
+  \item Lema de consistencia: el matching fuerza O todos $T^i_*$ O todos $F^i_*$
+\end{itemize}
+
+\medskip
+\textbf{Gadget de clausula} $C_j = (\ell_1 \vee \ell_2 \vee \ell_3)$:
+\begin{itemize}
+  \item Dos nuevos elementos $c_j \in Y$, $c'_j \in Z$
+  \item Tres tripletas-clausula (una por literal); exactamente una puede ser seleccionada
+\end{itemize}
+
+\medskip
+\textbf{Tamano de la reduccion:} $n = 6q$ elementos por dimension, $m = O(q^3)$ tripletas, construccion en tiempo polinomial.
+
+\end{frame}
+
+\begin{frame}{Backup: Fenomeno Java $>$ C++ para instancias largas}
+
+Para $n{=}50$, $m{=}200$ (instancia \textit{random\_n50\_m200\_s0}):
+\begin{itemize}
+  \item \textbf{C++ smart}: 39.0 s (38\,944 ms)
+  \item \textbf{Java smart}: 29.8 s (29\,843 ms)
+  \item \textbf{Python}: timeout en 60 s
+\end{itemize}
+
+\medskip
+\textbf{Explicacion:}
+\begin{itemize}
+  \item Mismos nodos explorados (57\,998\,790): logica identica
+  \item JIT HotSpot (Temurin-21) con warm-up completo supera GCC~-O2
+  \item \texttt{Long.bitCount()} llega al hardware POPCNT igual que C++
+  \item JIT hace mejor especulacion de branches en el loop interno
+\end{itemize}
+
+\medskip
+\small\textit{Este fenomeno esta bien documentado: JIT puede superar AOT en workloads con patrones predecibles y hot loops.}
+
+\end{frame}

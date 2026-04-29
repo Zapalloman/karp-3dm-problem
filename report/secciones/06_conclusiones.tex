@@ -1,0 +1,70 @@
+% 06_conclusiones.tex — Conclusiones
+\section{Conclusiones}
+\label{sec:conclusiones}
+
+\subsection{Hallazgos principales}
+\label{sec:conc:hallazgos}
+
+Este trabajo implementó, comparó y analizó experimentalmente dos algoritmos de
+backtracking exacto para \threedm{} en tres lenguajes de programación:
+
+\begin{enumerate}
+  \item \textbf{Las podas de SMART son decisivas.}
+        El speedup de SMART sobre BRUTE supera $60\,000\times$ para instancias
+        de tamaño moderado ($n=20$, $m=80$) y crece con~$n$.
+        A partir de $n\approx 20$ con densidad alta, BRUTE es inutilizable
+        (timeout en 30~s) mientras SMART resuelve la instancia en milisegundos.
+
+  \item \textbf{C++ es el lenguaje más rápido}, con Java a $\sim3\times$ y
+        Python a $\sim63\times$ en condiciones normales.
+        Sin embargo, para instancias muy largas con \textit{warm-up} completo,
+        el JIT de HotSpot puede superar a GCC~-O2 en el loop de backtracking,
+        fenómeno confirmado experimentalmente en $n=50$, $m=200$.
+
+  \item \textbf{Los tres lenguajes son lógicamente equivalentes.}
+        El número de nodos explorados es idéntico en C++, Java y Python para la
+        misma instancia y semilla, verificando que las seis implementaciones
+        ejecutan el mismo algoritmo.
+
+  \item \textbf{3DM exhibe su dureza teórica en la práctica.}
+        Las instancias derivadas de fórmulas 3-SAT en el umbral de
+        satisfacibilidad producen timeout incluso en SMART para $n\ge 102$,
+        y las instancias aleatorias con $n=100$ son intractables en todos los
+        solvers.
+\end{enumerate}
+
+\subsection{Limitaciones}
+\label{sec:conc:limitaciones}
+
+\begin{itemize}
+  \item Los benchmarks se limitan a $n\le 50$ (suit \textit{medium}) porque
+        las instancias \textit{large} ($n=100$) son completamente intractables
+        para todos los solvers actuales.
+  \item El bug de C++~\texttt{--time-limit} bajo \texttt{-O2} requirió un
+        workaround a nivel de shell; una solución definitiva requeriría
+        revisar el uso de \texttt{std::condition\_variable} con variables
+        atómicas.
+  \item El promedio de Java incluye el ruido del JIT warm-up en instancias
+        pequeñas; un calentamiento explícito mejoraría la precisión de las
+        mediciones.
+\end{itemize}
+
+\subsection{Trabajo futuro}
+\label{sec:conc:futuro}
+
+\begin{itemize}
+  \item \textbf{Aproximaciones polinomiales.}
+        Implementar el algoritmo de \textit{local search} de Cygan~\cite{cygan2015}
+        (razón $\approx 0.66$) para instancias donde el backtracking exacto
+        es impracticable.
+  \item \textbf{Dancing Links (DLX).}
+        Comparar con la estructura de Knuth para \textit{exact cover}
+        (m\'as eficiente en memoria).
+  \item \textbf{Reducción a SAT o ILP externo.}
+        Comparar los tiempos de un solver SAT moderno (MiniSat, CaDiCaL) y
+        un solver ILP (GLPK) como referencias de cota inferior de tiempo.
+  \item \textbf{Paralelismo.}
+        La rama ``tomar/no tomar'' del backtracking es independiente: un
+        paralelismo simple (\textit{work-stealing}) podría explotar los 8~núcleos
+        disponibles para instancias en el rango $n=30$--$50$.
+\end{itemize}

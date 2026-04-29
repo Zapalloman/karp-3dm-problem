@@ -1,0 +1,4 @@
+lang,algo,family,instance,n,m,opt,k,time_ms,nodes,timed_out,replica
+python,smart,hard,hard_n102_m3621_s0,102,3621,NA,NA,60000,NA,1,1
+cpp,smart,hard,hard_n102_m3621_s0,102,3621,NA,NA,60000,NA,1,1
+java,smart,hard,hard_n102_m3621_s0,102,3621,NA,100,60003.379,5078999,1,1

@@ -1,0 +1,40 @@
+% theme.tex — Configuracion visual de los slides 3DM
+% Tema estandar Madrid (robusto, sin dependencias externas)
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Paleta de colores consistente con el informe
+\definecolor{mainblue}{RGB}{0,70,130}
+\definecolor{accentred}{RGB}{180,30,30}
+\definecolor{lightgray}{RGB}{240,240,240}
+
+\setbeamercolor{frametitle}{bg=mainblue, fg=white}
+\setbeamercolor{title}{bg=mainblue, fg=white}
+\setbeamercolor{subtitle}{bg=mainblue, fg=white}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightgray}
+\setbeamercolor{alerted text}{fg=accentred}
+
+% Fuentes
+\setbeamerfont{frametitle}{series=\bfseries, size=\large}
+\setbeamerfont{title}{series=\bfseries, size=\Large}
+\setbeamerfont{subtitle}{series=\normalfont, size=\normalsize}
+
+% Pie de pagina: numero de frame en texto puro (evita nullfont)
+\setbeamertemplate{footline}{%
+  \hfill\usebeamercolor[fg]{footline}%
+  \usebeamerfont{footline}%
+  \textbf{\mbox{\insertframenumber}}%
+  \hspace*{2ex}%
+  \vspace*{1ex}%
+}
+
+% Eliminar botones de navegacion
+\setbeamertemplate{navigation symbols}{}
+
+% Separadores de items mas limpios
+\setbeamertemplate{itemize item}{\color{mainblue}\textbullet}
+\setbeamertemplate{itemize subitem}{\color{accentred}--}

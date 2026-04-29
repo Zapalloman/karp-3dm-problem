@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "threedm"
+version = "0.1.0"
+description = "3-Dimensional Matching solver — Python implementation"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+threedm = "threedm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["threedm*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

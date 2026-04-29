@@ -1,0 +1,44 @@
+% 05_implementacion.tex — Slide 5: Implementacion BASE vs SMART
+\begin{frame}{Implementacion: BRUTE vs SMART}
+
+\begin{columns}[T]
+\begin{column}{0.54\textwidth}
+
+\centering
+\small
+\begin{tabular}{lp{2.5cm}p{2.5cm}}
+\toprule
+ & \textbf{BRUTE} & \textbf{SMART} \\
+\midrule
+Estrategia & Back. $2^m$ & Con heuristicas \\
+Complejidad & $O(2^m)$ & Exp.; poda \\
+Bitmask & Si $O(1)$ & Si $O(1)$ \\
+Cota sup. & No & $\min(fX,fY,fZ)$ \\
+MRV & No & \alert{Si} \\
+Fwd.\ check & No & \alert{Si} \\
+\bottomrule
+\end{tabular}
+
+\end{column}
+
+\begin{column}{0.43\textwidth}
+
+\textbf{Lenguajes (misma logica):}
+\begin{itemize}
+  \item \textbf{Python 3.11}: claridad
+  \item \textbf{C++17}: rendimiento (\texttt{-O2})
+  \item \textbf{Java 17}: JIT HotSpot
+\end{itemize}
+
+\medskip
+\textbf{Decision tecnica clave:}
+
+\texttt{uint64}/\texttt{long} bitmasks $\Rightarrow$ conflicto y \texttt{popcount} en $O(1)$.
+
+\medskip
+\textbf{Determinismo:} misma semilla $\Rightarrow$ mismos nodos en los 3 lenguajes.
+
+\end{column}
+\end{columns}
+
+\end{frame}

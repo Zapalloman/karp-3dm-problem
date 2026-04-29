@@ -1,0 +1,59 @@
+% preamble.tex — paquetes y comandos globales del informe 3DM
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% Matemáticas
+\usepackage{amsmath, amssymb, amsthm}
+
+% Tipografía de tablas y figuras
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+
+% Hipervínculos
+\usepackage[hidelinks]{hyperref}
+
+% Algoritmos
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\SetKwInput{KwIn}{Entrada}
+\SetKwInput{KwOut}{Salida}
+
+% Código fuente (para snippets inline)
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Geometría de página
+\usepackage[margin=2.5cm]{geometry}
+
+% Bibliografía con natbib (compatible con tectonic sin biber)
+\usepackage[numbers,sort&compress]{natbib}
+
+% Entornos matemáticos
+\newtheorem{lemma}{Lema}[section]
+\newtheorem{theorem}[lemma]{Teorema}
+\newtheorem{corollary}[lemma]{Corolario}
+\theoremstyle{definition}
+\newtheorem{definition}[lemma]{Definición}
+\theoremstyle{remark}
+\newtheorem*{remark}{Nota}
+
+% Operadores matemáticos
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\OPT}{OPT}
+
+% Abreviaturas útiles
+\newcommand{\threedm}{3\nobreakdash-Dimensional Matching}
+\newcommand{\PNPO}{\ensuremath{\text{P} \neq \text{NP}}}
+
+% Estilo de código
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+}

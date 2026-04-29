@@ -1,0 +1,31 @@
+% 00_resumen.tex — Resumen ejecutivo (≈ ½ página)
+\begin{abstract}
+El problema \threedm{} (\textbf{3DM}, Karp~\#17, 1972) pregunta si, dados tres
+conjuntos disjuntos $X$, $Y$, $Z$ de tamaño $n$ y un conjunto $T$ de tripletas
+candidatas en $X\times Y\times Z$, existen $n$ tripletas mutuamente disjuntas
+en cada coordenada.  Es NP-completo por reducción desde 3-SAT, y su versión de
+optimización (\textsc{max-3DM}) es APX-difícil.
+
+En este trabajo implementamos \textsc{max-3DM} en \textbf{tres lenguajes}
+(Python~3.11, C++17, Java~17) con \textbf{dos algoritmos} cada uno:
+\textit{BRUTE} (backtracking simple) y \textit{SMART} (backtracking con
+bitmask + heurística MRV + forward checking + cota superior).
+Los experimentos sobre 115 instancias de las familias
+\textit{random}, \textit{structured}, \textit{dense} y \textit{mini}
+arrojaron los siguientes resultados principales:
+\begin{itemize}
+  \item El algoritmo SMART supera a BRUTE en más de
+        $\mathbf{60\,000\times}$ para instancias con $n{=}20$, $m{=}80$;
+        el speedup crece con $n$.
+  \item \textbf{C++} es el lenguaje más rápido (referencia 1$\times$);
+        \textbf{Java} es ${\sim}3\times$ más lento y \textbf{Python}
+        ${\sim}63\times$ más lento en la configuración SMART, $n{=}30$, $m{=}120$.
+  \item Los 6 solvers producen resultados \textbf{idénticos} en todas las
+        instancias completadas (0 discrepancias de bug); el número de nodos
+        explorados es también idéntico entre lenguajes, confirmando que la
+        lógica de backtracking es equivalente.
+  \item Las instancias \textit{hard} (derivadas de fórmulas 3-SAT en el
+        umbral de satisfacibilidad) producen timeout en todos los solvers
+        desde $n{\approx}102$, exhibiendo el peor caso exponencial del problema.
+\end{itemize}
+\end{abstract}

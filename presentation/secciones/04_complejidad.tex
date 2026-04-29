@@ -1,0 +1,59 @@
+% 04_complejidad.tex — Slide 4: Complejidad y NP-completitud
+\begin{frame}{Complejidad: por que 3DM es NP-completo}
+
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+{\small
+\textbf{Pertenencia a NP:}
+\begin{itemize}
+  \item Certificado: $k$ indices de tripletas
+  \item Verificador: 3 bitmasks en $O(n)$
+\end{itemize}
+
+\smallskip
+\textbf{NP-dificultad (Karp 1972):}\\
+Reduccion $\text{3-SAT} \le_p \mathbf{3DM}$ via gadgets:
+\begin{itemize}
+  \item \textbf{G-V}: codifica variables
+  \item \textbf{G-C}: codifica clausulas
+  \item \textbf{G-G}: recolecta basura
+\end{itemize}
+Instancia: $n{=}6q$ elems., $m{=}O(q^3)$ trips.
+
+\smallskip
+\textbf{max-3DM:} APX-dificil
+\begin{itemize}
+  \item Sin PTAS salvo P=NP
+  \item Mejor aprox.: $\approx 0.66$
+\end{itemize}
+}
+\end{column}
+
+\begin{column}{0.47\textwidth}
+
+\begin{block}{Cadena de reducciones}
+\centering
+\smallskip
+\begin{tikzpicture}[
+  every node/.style={font=\small},
+  arrow/.style={->, thick, mainblue}
+]
+  \node[draw, rounded corners, fill=blue!10, minimum width=2.8cm, minimum height=0.6cm]
+        (sat)  at (0, 0)   {3-SAT (\#11)};
+  \node[draw, rounded corners, fill=red!10,  minimum width=2.8cm, minimum height=0.6cm,
+        line width=1.5pt]
+        (tdm)  at (0,-1.3) {\textbf{3DM (\#17)}};
+  \node[draw, rounded corners, fill=gray!10, minimum width=2.8cm, minimum height=0.6cm]
+        (sp)   at (0,-2.6) {Set Packing (\#4)};
+  \draw[arrow] (sat) -- (tdm) node[midway, right, font=\tiny] {Karp '72};
+  \draw[arrow] (tdm) -- (sp)  node[midway, right, font=\tiny] {$\le_p$};
+\end{tikzpicture}
+
+\smallskip
+{\small\textit{La 3$^{\mathrm{a}}$ dimension rompe la unimodularidad que hace P al matching bipartito.}}
+\end{block}
+
+\end{column}
+\end{columns}
+
+\end{frame}

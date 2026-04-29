@@ -1,0 +1,165 @@
+% 04_implementacion.tex — Implementación: algoritmos y lenguajes
+\section{Implementación}
+\label{sec:implementacion}
+
+\subsection{Arquitectura general}
+\label{sec:impl:arquitectura}
+
+Se implementaron \textbf{seis} solvers: algoritmos BRUTE y SMART en
+Python~3.11, C++17 y Java~17.
+Todos comparten el mismo formato de instancia y la misma
+interfaz de l\'inea de comandos:
+\begin{lstlisting}[language=bash,basicstyle=\ttfamily\footnotesize]
+<programa> <instancia.3dm> [--algo brute|smart] \
+  [--time-limit <s>] [--seed <int>] [--output <path>]
+\end{lstlisting}
+La salida estándar incluye el matching seguido de una línea de estadísticas:
+\begin{lstlisting}
+k
+i1
+...
+ik
+# stats: time_ms=<float> nodes=<int> algo=<brute|smart> n=<n> m=<m>
+\end{lstlisting}
+
+\subsection{Pre-procesamiento}
+\label{sec:impl:preproceso}
+
+Tras leer la instancia, cada solver construye índices invertidos:
+$\texttt{inX}[x]$, $\texttt{inY}[y]$, $\texttt{inZ}[z]$: listas de índices
+de tripletas que contienen el elemento correspondiente.
+Este pre-procesamiento es $O(m)$ y se realiza una sola vez.
+
+El estado de la búsqueda se almacena en tres \emph{bitmasks} de $n$ bits
+(\texttt{usedX}, \texttt{usedY}, \texttt{usedZ}): el bit~$e$ vale~1 si el
+elemento~$e$ ya está cubierto por el matching parcial.
+Cuando $n\le 64$ (todos los experimentos) se usan enteros de 64~bits, lo que
+permite test de conflicto y conteo de elementos libres (\texttt{popcount}) en
+tiempo $O(1)$.
+
+\subsection{Algoritmo BRUTE --- backtracking simple}
+\label{sec:impl:brute}
+
+\begin{algorithm}[htbp]
+\DontPrintSemicolon
+\caption{BRUTE: backtracking sobre las $m$ tripletas}
+\label{alg:brute}
+\KwIn{instancia $(n,T)$ con índices inversos}
+\KwOut{mejor matching $M^*$ encontrado}
+$chosen \leftarrow [\,]$;\quad $best \leftarrow [\,]$;\quad
+$usedX = usedY = usedZ \leftarrow 0$\;
+\SetKwFunction{recur}{recur}
+\SetKwProg{Fn}{Función}{:}{}
+\Fn{\recur{$i$}}{
+  \If{$i = m$}{
+    \If{$|chosen| > |best|$}{$best \leftarrow \text{copy}(chosen)$}
+    \KwRet
+  }
+  $(x,y,z) \leftarrow T[i]$\;
+  \If{bit $x$ libre en $usedX$ \textbf{and} bit $y$ libre en $usedY$
+      \textbf{and} bit $z$ libre en $usedZ$}{
+    Activar bits $x,y,z$;\quad $chosen.\text{append}(i)$\;
+    \recur{$i+1$}\;
+    Limpiar bits $x,y,z$;\quad $chosen.\text{pop}()$\;
+  }
+  \recur{$i+1$}\tcp*{rama ``saltar''}
+}
+\recur{$0$};\quad \Return{$best$}
+\end{algorithm}
+
+BRUTE explora el árbol binario de $2^m$ hojas potenciales, restringido a las
+ramas factibles.  En el peor caso (instancias densas) el costo es $O(2^m)$.
+
+\subsection{Algoritmo SMART --- MRV + bitmask + forward checking}
+\label{sec:impl:smart}
+
+SMART incorpora cuatro mejoras que reducen drásticamente el árbol de búsqueda:
+
+\begin{enumerate}
+  \item \textbf{Bitmask en $O(1)$.}  Conflictos y conteo de elementos libres
+        se verifican con operaciones de bit.
+  \item \textbf{Cota superior (upper bound).}  Al entrar en cada nodo se
+        calcula
+        $\texttt{upper} = |chosen| + \min(\texttt{freeX}, \texttt{freeY},
+        \texttt{freeZ})$.
+        Si $\texttt{upper}\le|best|$, el nodo se poda.
+  \item \textbf{MRV (Minimum Remaining Values).}  Se elige el elemento libre
+        $e$ con el menor número de tripletas \emph{disponibles} (no
+        bloqueadas por \texttt{used*}).
+        Si algún $e$ tiene 0 tripletas disponibles (elemento inalcanzable),
+        se descarta en esta rama y se recursa sin él.
+  \item \textbf{Forward checking implícito.}  Al fijar una tripleta
+        $(x,y,z)$, los bits $x$, $y$, $z$ en \texttt{used*} se activan;
+        cualquier tripleta que comparte alguno de estos bits queda
+        automáticamente bloqueada para ramas descendientes.
+\end{enumerate}
+
+\begin{algorithm}[htbp]
+\DontPrintSemicolon
+\caption{SMART: backtracking con MRV + bitmask + poda}
+\label{alg:smart}
+\KwIn{instancia $(n,T)$ con índices inversos; bitmasks \texttt{usedX,Y,Z},
+      \texttt{discardedX,Y,Z}}
+\KwOut{mejor matching $M^*$ encontrado}
+\SetKwFunction{recur}{recur}
+\SetKwProg{Fn}{Función}{:}{}
+\Fn{\recur{}}{
+  $\textit{upper} \leftarrow |chosen| + \min(\texttt{freeX},\texttt{freeY},\texttt{freeZ})$\;
+  \If{$\textit{upper} \le |best|$}{\KwRet\tcp*{poda por cota superior}}
+  Elegir $(dim, e)$ libre y no descartado con mínimo \#tripletas disponibles\;
+  \If{no hay tales $(dim,e)$}{
+    \If{$|chosen|>|best|$}{$best\leftarrow\text{copy}(chosen)$}
+    \KwRet
+  }
+  \If{$\#\text{disponibles}(e) = 0$}{
+    Marcar $e$ como descartado;\quad \recur{};\quad Des-marcar\;
+    \KwRet
+  }
+  \ForEach{tripleta $i$ disponible de $(dim,e)$}{
+    $(x,y,z)\leftarrow T[i]$;\quad Activar bits;\quad $chosen.\text{append}(i)$\;
+    \recur{}\;
+    Limpiar bits;\quad $chosen.\text{pop}()$\;
+  }
+  Marcar $e$ como descartado;\quad \recur{};\quad Des-marcar\tcp*{opción ``no emparejar $e$''}
+}
+\end{algorithm}
+
+\subsection{Invariante de determinismo}
+\label{sec:impl:determinismo}
+
+Los tres lenguajes procesan las tripletas y los índices en el mismo orden
+(determinado por la semilla de entrada), lo que garantiza \textbf{igual número
+de nodos explorados} entre C++, Java y Python para la misma instancia y semilla.
+Esto fue verificado experimentalmente (Tabla~\ref{tab:correctness}).
+
+\subsection{Bug en C++ con \texttt{--time-limit} bajo \texttt{-O2}}
+\label{sec:impl:bug}
+
+Se detectó que el flag \texttt{--time-limit} en la implementación C++ reporta
+\texttt{timed\_out=1} de forma prematura cuando el binario se compila con
+\texttt{-O2}.  La causa es una interacción entre la optimización del compilador
+y el mecanismo de \texttt{std::condition\_variable} del hilo observador
+(\textit{watcher thread}).  Con \texttt{-O0} el comportamiento es correcto.
+
+\textbf{Workaround.}  El script de benchmarks usa \texttt{timeout TL\_s ./3dm}
+a nivel shell para C++, en lugar del flag interno.  Esta decisión no afecta
+la corrección de los resultados: el número de nodos explorados y el óptimo
+reportado coinciden con los de Java y Python en todas las instancias
+completadas.
+
+\subsection{Complejidad y correctitud}
+\label{sec:impl:correctitud}
+
+\paragraph{BRUTE.}  Peor caso $O(2^m)$.  Por construcción, toda solución
+devuelta es un 3-matching válido (las restricciones de \texttt{used*} se
+verifican antes de cada inserción).
+
+\paragraph{SMART.}  El árbol podado es exponencialmente menor en la
+práctica, pero el peor caso sigue siendo exponencial (el problema es
+NP-difícil).  La cota superior basada en $\min(\texttt{freeX},\ldots)$
+es \emph{admisible}: nunca descarta la solución óptima.  La poda MRV
+es un caso especial de la heurística de \emph{fail-first} estándar en CSP.
+
+\paragraph{Correctitud cruzada.}  Los seis solvers fueron validados con
+\texttt{tools/validator.py} y produjeron el mismo valor $\OPT(I)$ en todas
+las instancias completadas (Sección~\ref{sec:experimentos}).
